@@ -6,10 +6,23 @@ const User = require('../models/user') //import the user model that allows me to
 
 router.get('/', (req, res, next) => {
     User.find()
+        .select('-__v') //select what data you actually fetch in this case everything aside from __v
         .exec()
         .then( docs =>{
-            console.log(docs)
-            res.status(200).json(docs)
+            const response ={
+                count: docs.length,
+                users: docs.map(doc =>{
+                    return {
+                        name: doc.name,
+                        _id: doc._id,
+                        request:{
+                            type: 'GET',
+                            url: 'http:localhost:3550/users/' + doc._id,
+                        }
+                    }
+                })
+            }
+            res.status(200).json(response)
         })
         .catch( err =>{
             console.log(err)
@@ -31,8 +44,15 @@ router.post('/', (req, res, next) => {
         .then(result =>{
             console.log(result)
             res.status(201).json({
-                message: 'Handling POST requests to /users',
-                createdUser: result
+                message: 'Created user successfully',
+                createdUser: {
+                    _id: result._id,
+                    name: result.name,
+                    request: {
+                        type: 'POST',
+                        url: 'http:localhost:3550/users/' + result._id
+                    }
+                }
             })
         })
         .catch(err => {
@@ -47,6 +67,7 @@ router.get('/:userId', (req, res, next) =>{
     const id = req.params.userId
 
     User.findById(id)
+        .select('-__v')
         .exec()
         .then(doc => {
             console.log('From db', doc)
