@@ -2,9 +2,21 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const usersRoutes = require('./api/routes/users');
 const gamesRoutes = require('./api/routes/games');
+
+
+
+// NEW METHOD of connecting if you have issues
+mongoose.connect('mongodb+srv://nimajik:'+process.env.MONGO_ATLAS_PW+'@pool-match-stats-7w12f.mongodb.net/test?retryWrites=true',
+    {
+        useNewUrlParser: true
+    }
+).catch(err => console.log(err))
+
+
 
 //middleware to use before going to the routes
 app.use(morgan('dev'))
