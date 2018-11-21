@@ -3,6 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 
 const User = require('../models/user') //import the user model that allows me to interact with the db
+const Game = require('../models/game');
 
 router.get('/', (req, res, next) => {
     User.find()
@@ -70,9 +71,26 @@ router.get('/:userId', (req, res, next) =>{
         .select('-__v')
         .exec()
         .then(doc => {
-            console.log('From db', doc)
+            //console.log('From db', doc)
             if(doc){
-                res.status(200).json(doc)
+                let response = doc.toJSON();
+
+                console.log( response)
+                const updateOps = {}
+
+                // send an object with the fields you wish to change
+                for (const key of Object.keys(doc)) {
+                    updateOps[key] = doc[key]
+                }
+                Game.find( {$or: [ {"teams.team2": id }, {"teams.team1": id } ]})
+                    .select('-__v')
+                    .exec()
+                    .then(games => {
+                        response.games = games;
+                        console.log('From db', response)
+                        res.status(200).json(response)
+                    })
+
             }else {
                 res.status(404).json({message: 'no valid entry for the id provided'})
             }

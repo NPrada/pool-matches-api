@@ -115,7 +115,11 @@ router.patch('/:gameId', (req, res, next) =>{
                 return Game.updateOne({_id: id}, { $set: newTeams })
                     .exec()
                     .then( result =>{
-                        res.status(200).json(result)
+                        if(result){
+                            res.status(200).json(result)
+                        }else{
+                            new Error('Got empty response')
+                        }
                 })
             })
             .catch(err =>{
