@@ -38,7 +38,7 @@ router.post('/', (req, res, next) => {
         name: req.body.name,
     })
 
-    //mongoouse stores this model in the db with save()
+    //mongoose stores this model in the db with save()
     user
         .save()
         .then(result =>{

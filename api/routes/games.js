@@ -46,9 +46,9 @@ router.post('/', (req, res, next) => {
     const allIds = req.body.teams.team1.concat(req.body.teams.team2)
 
     if( !allIds.every(value => {return typeof value !== 'undefined'}) ){
-        res.status(404).json({success: false, error: "One or both teams didn't have any players"})
+        new Error('One or both teams didn\'t have any players')
     }else if( allIds.length === 0) {
-        res.status(404).json({success: false, error: "No players were provided"})
+        new Error('No players were provided')
     }else{
 
         const idsToCheck = allIds.map(playerObj => {
@@ -88,12 +88,42 @@ router.post('/', (req, res, next) => {
 
             })
     }
+})
 
+router.patch('/:gameId', (req, res, next) =>{
+    const id = req.params.gameId;
 
+    const allIds = req.body.teams.team1.concat(req.body.teams.team2)
 
+    if( !allIds.every(value => {return typeof value !== 'undefined'}) ){
+        res.status(404).json({success: false, error: "One or both teams didn't have any players"})
+    }else if( allIds.length === 0) {
+        res.status(404).json({success: false, error: "No players were provided"})
+    }else{
 
+        const idsToCheck = allIds.map(playerObj => {
+            return  playerObj._id;
+        })
 
+        User.find({ '_id': { $in:  idsToCheck }})
+            .then(idsValid => {
+                if(!idsValid){
+                    return res.status(404).json({ error: 'Some players dont exist'})
+                }
+                const newTeams = { teams: req.body.teams}
+                console.log(req.body.teams)
+                return Game.updateOne({_id: id}, { $set: newTeams })
+                    .exec()
+                    .then( result =>{
+                        res.status(200).json(result)
+                })
+            })
+            .catch(err =>{
+                console.log(err)
+                res.status(500).json({success: false, error: err})
 
+            })
+    }
 })
 
 router.get('/:gameId', (req, res, next) => {
