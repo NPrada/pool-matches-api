@@ -9,8 +9,8 @@ const gamesRoutes = require('./api/routes/games');
 
 
 
-// NEW METHOD of connecting if you have issues
-mongoose.connect('mongodb+srv://nimajik:'+process.env.MONGO_ATLAS_PW+'@pool-match-stats-7w12f.mongodb.net/test?retryWrites=true',
+// NEW METHOD of connecting
+mongoose.connect('mongodb+srv://'+process.env.MONGO_USER+':'+process.env.MONGO_ATLAS_PW+'@pool-match-stats-7w12f.mongodb.net/test?retryWrites=true',
     {
         useNewUrlParser: true
     }
