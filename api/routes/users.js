@@ -82,7 +82,7 @@ router.get('/:userId', (req, res, next) => {
         for (const key of Object.keys(doc)) {
           updateOps[key] = doc[key]
         }
-        Game.find({$or: [{"teams.team2.id": id}, {"teams.team1.id": id}]})
+        Game.find({$or: [{"teams.team2._id": id}, {"teams.team1._id": id}]})
           .select('-__v')
           .exec()
           .then(games => {

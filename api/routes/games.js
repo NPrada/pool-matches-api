@@ -69,7 +69,6 @@ router.post('/', (req, res, next) => {
             team2:[]
           }
 
-          console.log(idsValid)
           const getMatchingUser = (id,allUsers) => {
             let result = null
             allUsers.forEach((val) => {
@@ -85,17 +84,12 @@ router.post('/', (req, res, next) => {
           req.body.teams.team2.forEach((val)=>{
             newTeams.team2.push(getMatchingUser(val._id,idsValid))
           })
-          console.log(newTeams)
-
           const game = new Game({
             _id: new mongoose.Types.ObjectId(),
             teams: newTeams,
             winner: req.body.winner,
             date: getDate(),
           });
-          console.log('---------------------------------------')
-          console.log(game)
-
 
           return game.save();
         }
