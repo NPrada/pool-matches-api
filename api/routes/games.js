@@ -59,15 +59,44 @@ router.post('/', (req, res, next) => {
     })
 
     User.find({'_id': {$in: idsToCheck}})
+      .select('-__v')
       .then(idsValid => {
         if (!idsValid) {
           return res.status(404).json({error: 'Some players dont exist'})
         } else {
+          let newTeams = {
+            team1:[],
+            team2:[]
+          }
+
+          console.log(idsValid)
+          const getMatchingUser = (id,allUsers) => {
+            let result = null
+            allUsers.forEach((val) => {
+              if(val._id == id){
+                result = val
+              }
+            })
+            return result
+          }
+          req.body.teams.team1.forEach((val)=>{
+            newTeams.team1.push(getMatchingUser(val._id,idsValid))
+          })
+          req.body.teams.team2.forEach((val)=>{
+            newTeams.team2.push(getMatchingUser(val._id,idsValid))
+          })
+          console.log(newTeams)
+
           const game = new Game({
             _id: new mongoose.Types.ObjectId(),
-            teams: req.body.teams,
+            teams: newTeams,
+            winner: req.body.winner,
             date: getDate(),
           });
+          console.log('---------------------------------------')
+          console.log(game)
+
+
           return game.save();
         }
 
