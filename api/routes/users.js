@@ -75,14 +75,14 @@ router.get('/:userId', (req, res, next) => {
       if (doc) {
         let response = doc.toJSON();
 
-        console.log(response)
+        console.log('response', response)
         const updateOps = {}
 
         // send an object with the fields you wish to change
         for (const key of Object.keys(doc)) {
           updateOps[key] = doc[key]
         }
-        Game.find({$or: [{"teams.team2": id}, {"teams.team1": id}]})
+        Game.find({$or: [{"teams.team2.id": id}, {"teams.team1.id": id}]})
           .select('-__v')
           .exec()
           .then(games => {
